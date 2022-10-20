@@ -1,0 +1,46 @@
+permit_join: true
+mqtt:
+  base_topic: zigbee2mqtt
+  server: mqtt://mqtt
+  user: zigbee2mqtt
+  password: zigbee2mqtt
+  client_id: zigbee2mqtt
+  include_device_information: true
+  keepalive: 60
+  version: 5
+  force_disable_retain: false
+serial:
+  port: /dev/ttyUSB0
+frontend:
+  port: 8080
+  host: 0.0.0.0
+availability:
+  active:
+    timeout: 10
+  passive:
+    timeout: 1440
+homeassistant:
+  discovery_topic: homeassistant
+  status_topic: hass/status
+  legacy_entity_attributes: true
+  legacy_triggers: true
+advanced:
+  adapter_concurrent: 16
+  transmit_power: 20
+  last_seen: epoch
+  network_key: GENERATE
+  channel: 25
+  log_level: info
+  timestamp_format: YYYY-MM-DD HH:mm:ss
+  log_directory: data/log/%TIMESTAMP%
+  log_file: zigbee2mqtt_%TIMESTAMP%.log
+  log_rotation: false
+  log_output:
+    - console
+    - file
+  log_symlink_current: true
+  legacy_availability_payload: false
+  homeassistant_legacy_entity_attributes: false
+  legacy_api: false
+device_options:
+  legacy: false

@@ -1,0 +1,60 @@
+services:
+  homeassistant:
+    container_name: homeassistant
+    image: "ghcr.io/home-assistant/home-assistant:stable"
+    depends_on:
+     - zigbee2mqtt
+    volumes:
+      - ${HOME}/.config/homeassistant:/config
+      - /etc/localtime:/etc/localtime:ro
+    networks:
+      - ha_bridge
+    ports:
+      - 8123:8123
+    environment:
+      - TZ=America/Los_Angeles
+      - DISABLE_JEMALLOC=true
+    restart: always
+    privileged: true
+
+  zigbee2mqtt:
+    container_name: zigbee2mqtt
+    image: koenkk/zigbee2mqtt
+    depends_on:
+     - mqtt
+    volumes:
+      - ${HOME}/.config/zigbee2mqtt:/app/data
+      - /run/udev:/run/udev:ro
+    devices:
+      - /dev/ttyUSB0:/dev/ttyUSB0
+    networks:
+      - ha_bridge
+    ports:
+      - 8080:8080
+    environment:
+      - TZ=America/Los_Angeles
+    restart: always
+
+  mqtt:
+    container_name: mqtt
+    image: eclipse-mosquitto:latest
+    volumes:
+      - ${HOME}/.config/mosquitto:/mosquitto
+    networks:
+      - ha_bridge
+    environment:
+      - TZ=America/Los_Angeles
+    command: "mosquitto -c /mosquitto/mosquitto.conf"
+    restart: always
+
+networks:
+  ha_bridge:
+    name: ha_bridge
+    enable_ipv6: true
+    driver: bridge
+    driver_opts:
+      com.docker.network.enable_ipv6: "true"
+    ipam:
+      config:
+        - subnet: 2001:db8:a::/64
+          gateway: 2001:db8:a::1
